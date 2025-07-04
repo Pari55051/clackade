@@ -1,5 +1,5 @@
 // CLACKADE: Compact Gamepad Efidget
-// Board: XIAO RP2040
+// Board: XIAO RP2040 (did you switch to the board in board manager??? why are so forgetful,and waste so much complie time)
 
 // ====== VARIABLES ======= //
 const int buttonPins[4] = {7, 0, 2 ,1};
@@ -23,11 +23,10 @@ void setup() {
     digitalWrite(ledPins[i], LOW);
   }
 
-  // Seed randomness based on first user input
   while (true) {
     for (int i = 0; i < 4; i++) {
       if (!digitalRead(buttonPins[i])) {
-        delay(50); // Debounce
+        delay(50); 
         randomSeed(millis());
         return;
       }
@@ -57,10 +56,10 @@ void loop () {
 // ====== BUTTON HANDLING ======= //
 void readButtons () {
   for (int i = 0; i < 4; i++) {
-    bool reading = !digitalRead(buttonPins[i]); // Active LOW
+    bool reading = !digitalRead(buttonPins[i]); 
     
     if (reading != lastButtonState[i]) {
-      delay(5); // crude debounce
+      delay(5);
 
       if (reading == !digitalRead(buttonPins[i])) {
         if (reading) {
@@ -140,7 +139,7 @@ void flashQuick(int index) {
 }
 
 void winAnimation() {
-  int clockwiseOrder[4] = {0, 1, 3, 2}; // Assuming GameBoy-style D-pad layout
+  int clockwiseOrder[4] = {0, 1, 3, 2};
   const int rounds = 3;
 
   for (int r = 0; r < rounds; r++) {
@@ -172,7 +171,7 @@ unsigned long simonFlashDelay = 500;
 bool simonInitialized = false;
 
 void runSimon() {
-  // First-time setup
+  // first time only setup
   if (!simonInitialized) {
     simonSequence[0] = random(0, 4);
     simonLength = 1;
@@ -186,7 +185,7 @@ void runSimon() {
     return;
   }
 
-  // === Pattern Display Phase ===
+  // patterns
   if (simonShowing) {
     if (millis() - simonLastTime >= simonFlashDelay) {
       if (simonLedOn) {
@@ -208,13 +207,13 @@ void runSimon() {
     return;
   }
 
-  // === Player Input Phase ===
+  // player input match
   for (int i = 0; i < 4; i++) {
     if (!digitalRead(buttonPins[i])) {
-      delay(20); // Debounce
-      while (!digitalRead(buttonPins[i])); // Wait for release
+      delay(20); 
+      while (!digitalRead(buttonPins[i])); 
 
-      // Feedback
+      
       digitalWrite(ledPins[i], HIGH);
       delay(200);
       digitalWrite(ledPins[i], LOW);
@@ -222,7 +221,7 @@ void runSimon() {
       if (i == simonSequence[simonInputIndex]) {
         simonInputIndex++;
 
-        // Player completed current sequence
+        // after current completion
         if (simonInputIndex >= simonLength) {
           if (simonLength < maxSequenceLength) {
             simonSequence[simonLength++] = random(0, 4);
@@ -235,7 +234,7 @@ void runSimon() {
         }
 
       } else {
-        // Incorrect input — flash error and reset
+        //reset at wrong input
         flashError();
         simonSequence[0] = random(0, 4);
         simonLength = 1;
@@ -265,7 +264,7 @@ int whackScore = 0;
 unsigned long whackStartDelay = 500;
 
 void runWhack() {
-  // === Show New Target ===
+  // create new tagret
   if (!whackActive && millis() - whackLastTime > whackStartDelay) {
     whackTarget = random(0, 4);
     digitalWrite(ledPins[whackTarget], HIGH);
@@ -273,33 +272,33 @@ void runWhack() {
     whackLastTime = millis();
   }
 
-  // === Check for Timeout ===
+  // check timeout
   if (whackActive && millis() - whackLastTime > whackInterval) {
     flashError();
     resetWhack();
     return;
   }
 
-  // === Handle Button Presses ===
+  // input match
   for (int i = 0; i < 4; i++) {
     if (!digitalRead(buttonPins[i])) {
-      delay(20); // debounce
+      delay(20); 
       while (!digitalRead(buttonPins[i]));
 
       if (whackActive) {
         if (i == whackTarget) {
-            // Hit!
+            // if hit correctly
             digitalWrite(ledPins[i], LOW);
             whackActive = false;
             whackScore++;
-            whackInterval = max(300, whackInterval - 50); // speed up
+            whackInterval = max(300, whackInterval - 50);
             whackStartDelay = 300;
 
-            if (whackScore % 5 == 0) {     // <-- Trigger on every 5 correct hits
+            if (whackScore % 5 == 0) {   // winAnimation for every 5 hits
                 winAnimation();              
             }
         } else {
-          // Wrong button
+          // if wrong btn
           flashError();
           resetWhack();
         }
@@ -322,49 +321,50 @@ void resetWhack() {
 
 // GAME: LED Chase
 // HOW TO PLAY: recreate a briefly showed led pattern
+
 // === LED Chase Globals ===
 int chaseIndex = 0;
 unsigned long chaseLastStepTime = 0;
 unsigned long chaseStepInterval = 300;
-bool chaseDirection = true; // true = forward, false = backward
+bool chaseDirection = true; // true = forward; false = backward
 bool chaseRunning = true;
 int chaseScore = 0;
 int chaseHits = 0;
 
 void runChase() {
-  // === Move LED ===
+  // moving LED
   if (millis() - chaseLastStepTime >= chaseStepInterval) {
     clearLEDs();
 
-    // Advance chase index
+    // chase index
     if (chaseDirection) {
       chaseIndex = (chaseIndex + 1) % 4;
     } else {
-      chaseIndex = (chaseIndex + 3) % 4; // same as -1 mod 4
+      chaseIndex = (chaseIndex + 3) % 4;
     }
 
     digitalWrite(ledPins[chaseIndex], HIGH);
     chaseLastStepTime = millis();
   }
 
-  // === Check Player Input ===
+  // input check
   for (int i = 0; i < 4; i++) {
     if (!digitalRead(buttonPins[i])) {
-      delay(20); // debounce
+      delay(20);
       while (!digitalRead(buttonPins[i]));
 
       if (i == chaseIndex) {
-        //  Good timing
+        // chase in time
         digitalWrite(ledPins[i], LOW);
         flashQuick(i);
         chaseHits++;
         chaseScore += 10;
-        if (chaseHits % 5 == 0) {
+        if (chaseHits % 5 == 0) { 
           chaseStepInterval = max(150, chaseStepInterval - 20);
-          winAnimation();
+          winAnimation();  // winAnimation for every 5 correct chases
         }
       } else {
-        //  Missed
+        // timeout => "You LOSE"
         flashError();
         resetChase();
       }
@@ -377,7 +377,7 @@ void resetChase() {
   clearLEDs();
   chaseIndex = 0;
   chaseStepInterval = 300;
-  chaseDirection = random(0, 2); // randomly choose direction
+  chaseDirection = random(0, 2); 
   chaseRunning = true;
   chaseHits = 0;
   chaseScore = 0;
@@ -398,7 +398,7 @@ bool feedbackActive = false;
 
 
 void runCodeCracker() {
-  // === One-time setup ===
+  // setup for first time only
   if (!codeCrackerInitialized) {
     generateSecretCode();
     guessIndex = 0;
@@ -407,7 +407,7 @@ void runCodeCracker() {
     return;
   }
 
-  // === Show feedback, if active ===
+  // led on if active
   if (feedbackActive && millis() - feedbackTime >= 1000) {
     clearLEDs();
     feedbackActive = false;
@@ -415,16 +415,16 @@ void runCodeCracker() {
     return;
   }
 
-  // === Record button inputs ===
+  // storing inputs
   if (!feedbackActive) {
     for (int i = 0; i < 4; i++) {
       if (!digitalRead(buttonPins[i])) {
-        delay(20); // debounce
+        delay(20);
         while (!digitalRead(buttonPins[i]));
 
         playerGuess[guessIndex++] = i;
 
-        // Light feedback
+        // feedback with corresp led on
         digitalWrite(ledPins[i], HIGH);
         delay(150);
         digitalWrite(ledPins[i], LOW);
@@ -453,7 +453,7 @@ void checkCodeGuess() {
   int correctPosition = 0;
   int correctButton = 0;
 
-  // First pass: correct position
+  // correct position
   for (int i = 0; i < codeLength; i++) {
     if (playerGuess[i] == secretCode[i]) {
       correctPosition++;
@@ -462,7 +462,7 @@ void checkCodeGuess() {
     }
   }
 
-  // Second pass: correct button, wrong position
+  // correct button, wrong position
   for (int i = 0; i < codeLength; i++) {
     if (guessed[i]) continue;
 
@@ -475,9 +475,7 @@ void checkCodeGuess() {
     }
   }
 
-  // === Feedback via LEDs ===
-  // Correct position: solid LED
-  // Correct button wrong pos: blink LED
+  // led output [Correct position: solid LED; Correct button wrong pos: blink LED]
   for (int i = 0; i < correctPosition; i++) {
     digitalWrite(ledPins[i], HIGH);
   }
@@ -489,7 +487,7 @@ void checkCodeGuess() {
     digitalWrite(ledPins[i], HIGH);
   }
 
-  // === Win condition ===
+  // guessed code correctly
   if (correctPosition == codeLength) {
     delay(200);
     // for (int i = 0; i < 3; i++) {
