@@ -56,3 +56,5 @@ a mini arcade in a gameboy style look, with 4 games inter-switchable by long-pre
 - Made by [U.N. Owen](https://github.com/pari55051)
 - Slack ID:  U08TH3JV9V4 (for hackclub's slack)
 - Made for: [Pathfinder - Hackclub's YSWS](http://pathfinder.hackclub.com/)
+
+* the drill and gerber files are in the production folder in folders drill an gerbers respectively
