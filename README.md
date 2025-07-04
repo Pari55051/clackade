@@ -5,25 +5,17 @@ a mini arcade in a gameboy style look, with 4 games inter-switchable by long-pre
 
 ## Included Games
 
-### 1. **Simon Says**
-- **Type:** Memory Game  
-- **Goal:** Repeat a randomly growing LED sequence. One wrong move resets the game.
+1. Simon Says: memory game where a sequence is shown and you have to press the exact same one
 
-### 2. **Whack-a-LED**
-- **Type:** Reflex Game  
-- **Goal:** Hit the button matching the LED before time runs out. Speeds up over time. Win animation triggers on a score threshold.
+2. Whack-a-LED: click the corresponding button to the led before the timer runs out (like Whack a Mole)
 
-### 3. **LED Chase**
-- **Type:** Timing Game  
-- **Goal:** Press the button when the LED "chase" passes over it. The pattern loops in direction, and difficulty increases with score.
+3. LED Chase: use the D-pad shaped buttons to navigate to the glowing led as fast as possible
 
-### 4. **Code Cracker**
-- **Type:** Logic Puzzle  
-- **Goal:** Guess a secret 3-button code. LEDs indicate correct positions or correct buttons in wrong positions (like a hardware Wordle).
+4. Code Cracker: try to guess a randomly code like a detective
 
 ---
 
-## Hardware Views
+## Images (or screenshots :P)
 
 ### Schematic
 ![Schematic](images/schem.png)
@@ -42,11 +34,11 @@ a mini arcade in a gameboy style look, with 4 games inter-switchable by long-pre
 
 ---
 
-## How It Works
+## How It Works (also acts as a BOM)
 
 - Microcontroller: Seeed XIAO RP2040  
 - Buttons: 4x tactile keyboard keys
-- LEDs: 4x single-color  
+- LEDs: 4x single-color (+ resistors)
 - Mode Switching: Long press on top button triggers the game select loop
 
 ---
@@ -57,4 +49,5 @@ a mini arcade in a gameboy style look, with 4 games inter-switchable by long-pre
 - Slack ID:  U08TH3JV9V4 (for hackclub's slack)
 - Made for: [Pathfinder - Hackclub's YSWS](http://pathfinder.hackclub.com/)
 
-* the drill and gerber files are in the production folder in folders drill an gerbers respectively
+
+> the drill and gerber files are in the production folder in folders drill an gerbers respectively
